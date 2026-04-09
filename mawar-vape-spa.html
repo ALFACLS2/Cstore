@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html class="light" lang="id">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
+<meta name="theme-color" content="#fff8f4"/>
+<title>Mawar Vape – Premium Experience</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+  tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        colors: {
+          "surface-container-low": "#fff1e5",
+          "on-secondary-fixed-variant": "#3f3b35",
+          "on-primary-fixed-variant": "#e4e2e1",
+          "surface-variant": "#f2dfcd",
+          "surface-container-lowest": "#ffffff",
+          "tertiary-fixed": "#5d5f5f",
+          "on-surface-variant": "#474747",
+          "secondary": "#625e57",
+          "surface-bright": "#fff8f4",
+          "primary-container": "#3b3b3b",
+          "error-container": "#ffdad6",
+          "primary-fixed": "#5f5e5e",
+          "on-error-container": "#410002",
+          "inverse-on-surface": "#ffeede",
+          "on-error": "#ffffff",
+          "tertiary": "#3a3c3c",
+          "secondary-fixed-dim": "#b1aaa2",
+          "on-background": "#231a0f",
+          "primary": "#000000",
+          "surface": "#fff8f4",
+          "inverse-primary": "#c8c6c5",
+          "on-tertiary": "#e2e2e2",
+          "on-primary": "#e4e2e1",
+          "background": "#fff8f4",
+          "secondary-container": "#dbd3cb",
+          "surface-container-high": "#f8e5d2",
+          "primary-fixed-dim": "#474746",
+          "outline": "#777777",
+          "on-secondary-container": "#1e1b16",
+          "secondary-fixed": "#ccc5bd",
+          "on-primary-container": "#ffffff",
+          "on-tertiary-fixed-variant": "#e2e2e2",
+          "surface-container": "#feebd8",
+          "on-secondary-fixed": "#1e1b16",
+          "on-surface": "#231a0f",
+          "error": "#ba1a1a",
+          "surface-tint": "#5f5e5e",
+          "on-primary-fixed": "#ffffff",
+          "outline-variant": "#c6c6c6",
+          "on-tertiary-fixed": "#ffffff",
+          "surface-container-highest": "#f2dfcd",
+          "surface-dim": "#ead7c5",
+          "inverse-surface": "#392f22",
+          "tertiary-container": "#737575",
+          "tertiary-fixed-dim": "#454747",
+          "on-tertiary-container": "#ffffff",
+          "on-secondary": "#ffffff"
+        },
+        borderRadius: {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        fontFamily: {
+          "headline": ["Plus Jakarta Sans", "sans-serif"],
+          "body": ["Manrope", "sans-serif"],
+          "label": ["Manrope", "sans-serif"]
+        }
+      },
+    },
+  }
+</script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* SPA – kita handle scroll per-view */
+    background: #fff8f4;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  /* ===== WRAPPER SPA ===== */
+  #app {
+    position: fixed;
+    inset: 0;
+    overflow: hidden;
+  }
+
+  /* ===== VIEWS ===== */
+  .view {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    transition: transform 0.38s cubic-bezier(0.4, 0, 0.2, 1),
+                opacity   0.38s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, opacity;
+  }
+
+  /* State: aktif */
+  .view.active {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: all;
+    z-index: 1;
+  }
+
+  /* State: tersembunyi di kiri (home saat katalog aktif) */
+  .view.slide-left {
+    transform: translateX(-30%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* State: tersembunyi di kanan (katalog saat home aktif) */
+  .view.slide-right {
+    transform: translateX(100%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== LANDING: GRADIENT OVERLAY ===== */
+  .content-gradient {
+    background: linear-gradient(180deg, rgba(255,248,244,0) 0%, rgba(255,248,244,0.8) 40%, rgba(255,248,244,1) 100%);
+  }
+
+  /* ===== KATALOG: UTILS ===== */
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    user-select: none;
+  }
+
+  .editorial-shadow {
+    box-shadow: 0 8px 24px rgba(35, 26, 15, 0.06);
+  }
+
+  /* Sembunyikan scrollbar tapi tetap scrollable */
+  .no-scrollbar { scrollbar-width: none; -ms-overflow-style: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+
+  /* Safe area (iPhone notch/home bar) */
+  .safe-bottom {
+    padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+  }
+
+  /* ===== RIPPLE EFFECT ===== */
+  .ripple-btn {
+    position: relative;
+    overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .ripple-btn::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: currentColor;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border-radius: inherit;
+  }
+
+  .ripple-btn:active::after { opacity: 0.08; }
+
+  /* ===== BOTTOM NAV ===== */
+  .bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 448px;
+    z-index: 50;
+  }
+
+  /* Produk card hover (desktop-friendly) */
+  @media (hover: hover) {
+    .product-card:hover .product-img {
+      transform: scale(1.05);
+    }
+  }
+
+  .product-img {
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  /* ===== CATEGORY PILL ACTIVE ===== */
+  .cat-pill.active {
+    background-color: #000;
+    color: #e4e2e1;
+  }
+
+  /* ===== FADE IN PRODUK ===== */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .product-card {
+    animation: fadeUp 0.4s ease both;
+  }
+
+  /* Staggered delay */
+  .product-card:nth-child(1) { animation-delay: 0.04s; }
+  .product-card:nth-child(2) { animation-delay: 0.08s; }
+  .product-card:nth-child(3) { animation-delay: 0.12s; }
+  .product-card:nth-child(4) { animation-delay: 0.16s; }
+  .product-card:nth-child(5) { animation-delay: 0.20s; }
+  .product-card:nth-child(6) { animation-delay: 0.24s; }
+  .product-card:nth-child(7) { animation-delay: 0.28s; }
+  .product-card:nth-child(8) { animation-delay: 0.32s; }
+</style>
+</head>
+<body class="bg-background text-on-background font-body antialiased">
+
+<div id="app">
+
+  <!-- ══════════════════════════════════════════
+       VIEW 1 – LANDING PAGE
+  ══════════════════════════════════════════ -->
+  <div id="view-home" class="view active">
+    <main class="relative min-h-[100dvh] w-full flex flex-col overflow-hidden">
+
+      <!-- Background Image -->
+      <div class="absolute inset-0 z-0">
+        <img
+          alt="Lifestyle background"
+          class="w-full h-full object-cover"
+          src="https://lh3.googleusercontent.com/aida/ADBb0uh0NsD8q2GV4HtU01rJktBfFlwKeeClOEE7m45Ygu4q53QUkoaQu-E8nOJCQtoNFV7mklZrGk4cHWBqdNlnAWFx-bk-vPUdkXblH31c4B9fGmdcFtAih9wvz_e8mi5MMOFuPnAsty8ikvOhFVyuDzK6BAIrTVA0s4k5qhKeB7WQ2jnJJv9ojrwM0tYjxKcbcX8n21JZS7JNJmDckXJVZKCK4VjNJ7bdD9cUm7ZxegmX7AyP85wrFNcaXVeT4RMBNsRdqXdUTK-wWw"
+        />
+        <div class="absolute inset-0 content-gradient z-10"></div>
+      </div>
+
+      <!-- Top App Bar -->
+      <header class="relative z-30 w-full px-6 py-4 flex justify-between items-center">
+        <img
+          alt="Logo"
+          class="h-12 w-auto object-contain drop-shadow-sm"
+          src="https://lh3.googleusercontent.com/aida/ADBb0uiFOEBZBykbpMcctxYJdxu8F4IUEfc1ZEcLFc8soesLXs6UAB7jUZEaVzFqmIhM1YR_aNbfzGmhK-EXSuxlO3Q0A-AJT_34FzFOnqzbUVt088zxbqjVz8mvLgvrD7XpSybSTRe5BK4TJKvmNieC338epJCkTV28wq-Y8i1OoHcfAnSiI6-dMXS3LijOQJxzvIGwNy-WtX-uPyfDZF-vNqi1epqPzKRb_LTlNqwdJbQNi5tcNfLZl7X3ekyWRwVmRKC6UR8rFqOpJQ"
+        />
+        <div class="h-10 w-10 flex items-center justify-center rounded-full bg-white/30 backdrop-blur-md border border-white/20">
+          <span class="material-symbols-outlined text-on-surface">menu</span>
+        </div>
+      </header>
+
+      <!-- Spacer -->
+      <div class="flex-grow"></div>
+
+      <!-- Content -->
+      <div class="relative z-20 w-full max-w-[440px] mx-auto px-6 pb-12 flex flex-col gap-6">
+
+        <!-- Text Group -->
+        <div class="flex flex-col gap-3">
+          <span class="font-label text-[10px] font-bold tracking-[0.15em] uppercase text-secondary/80">
+            Premium Experience • Fast Delivery • Trusted Store
+          </span>
+          <h1 class="font-headline text-3xl font-extrabold leading-tight tracking-tight text-on-background">
+            Premium Vape Experience, Closer Than You Think
+          </h1>
+          <p class="font-body text-sm leading-relaxed text-on-surface-variant font-medium">
+            Nikmati liquid terbaik dengan rasa smooth &amp; bold. Order cepat via Grab atau hubungi store terdekat langsung.
+          </p>
+        </div>
+
+        <!-- Actions -->
+        <div class="w-full flex flex-col gap-3">
+
+          <!-- Order via Grab -->
+          <button
+            class="ripple-btn flex items-center justify-center w-full h-[58px] px-6 rounded-full bg-primary text-on-primary font-headline font-bold text-base shadow-lg shadow-primary/10 active:scale-[0.98] transition-transform"
+          >
+            Order via Grab
+          </button>
+
+          <div class="grid grid-cols-2 gap-3 w-full">
+            <!-- Katalog Menu — navigasi ke view katalog -->
+            <button
+              id="btn-katalog"
+              class="ripple-btn flex items-center justify-center w-full h-[54px] px-4 rounded-2xl bg-white/80 backdrop-blur-md text-on-surface font-headline font-semibold text-sm border border-white/40 shadow-sm active:scale-[0.98] transition-transform"
+            >
+              Katalog Menu
+            </button>
+
+            <button
+              class="ripple-btn flex items-center justify-center w-full h-[54px] px-4 rounded-2xl bg-white/80 backdrop-blur-md text-on-surface font-headline font-semibold text-sm border border-white/40 shadow-sm active:scale-[0.98] transition-transform"
+            >
+              Hubungi CS
+            </button>
+          </div>
+
+          <!-- Lokasi Toko -->
+          <button
+            class="ripple-btn flex items-center justify-center w-full h-[54px] px-4 rounded-2xl bg-white/80 backdrop-blur-md text-on-surface font-headline font-semibold text-sm border border-white/40 shadow-sm active:scale-[0.98] transition-transform"
+          >
+            <span class="material-symbols-outlined mr-2 text-[18px] text-primary" style="font-variation-settings: 'FILL' 1;">location_on</span>
+            Lokasi Toko
+          </button>
+
+        </div>
+      </div>
+    </main>
+  </div>
+
+
+  <!-- ══════════════════════════════════════════
+       VIEW 2 – KATALOG
+  ══════════════════════════════════════════ -->
+  <div id="view-katalog" class="view slide-right">
+    <div class="relative flex flex-col bg-background min-h-[100dvh] max-w-[448px] mx-auto">
+
+      <!-- Header sticky -->
+      <div class="sticky top-0 z-50 flex items-center bg-background/80 backdrop-blur-xl px-4 py-4 justify-between border-b border-outline-variant/10">
+
+        <!-- Tombol kembali -->
+        <button
+          id="btn-back"
+          class="ripple-btn text-primary flex size-10 shrink-0 items-center justify-center rounded-full"
+        >
+          <span class="material-symbols-outlined">arrow_back</span>
+        </button>
+
+        <h1 class="text-on-surface text-xl font-headline font-bold leading-tight tracking-[-0.02em] flex-1 text-center">
+          Katalog Menu
+        </h1>
+
+        <div class="flex w-10 items-center justify-end">
+          <button class="ripple-btn flex items-center justify-center rounded-full h-10 w-10 text-primary">
+            <span class="material-symbols-outlined">shopping_bag</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="px-6 py-4">
+        <div class="flex w-full h-14 items-center rounded-full bg-surface-container-low px-4 gap-3">
+          <span class="material-symbols-outlined text-on-surface-variant text-[20px]">search</span>
+          <input
+            id="search-input"
+            class="flex-1 border-none bg-transparent focus:outline-none focus:ring-0 placeholder:text-secondary text-sm font-body text-on-surface"
+            placeholder="Cari rasa favoritmu..."
+          />
+          <button id="clear-search" class="hidden text-secondary">
+            <span class="material-symbols-outlined text-[18px]">close</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="flex gap-3 px-6 pb-5 overflow-x-auto no-scrollbar">
+        <button class="cat-pill active ripple-btn flex h-10 shrink-0 items-center justify-center px-6 rounded-full font-label text-xs font-semibold tracking-wider uppercase transition-colors" data-cat="all">
+          Semua
+        </button>
+        <button class="cat-pill ripple-btn flex h-10 shrink-0 items-center justify-center px-6 rounded-full bg-surface-container-highest text-on-surface font-label text-xs font-semibold tracking-wider uppercase transition-colors" data-cat="terlaris">
+          Terlaris
+        </button>
+        <button class="cat-pill ripple-btn flex h-10 shrink-0 items-center justify-center px-6 rounded-full bg-surface-container-highest text-on-surface font-label text-xs font-semibold tracking-wider uppercase transition-colors" data-cat="terbaru">
+          Terbaru
+        </button>
+        <button class="cat-pill ripple-btn flex h-10 shrink-0 items-center justify-center px-6 rounded-full bg-surface-container-highest text-on-surface font-label text-xs font-semibold tracking-wider uppercase transition-colors" data-cat="promo">
+          Promo
+        </button>
+      </div>
+
+      <!-- Product Grid -->
+      <div id="product-grid" class="grid grid-cols-2 gap-4 px-6 pb-32">
+
+        <!-- Mawar Ice Berry -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terlaris">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="absolute top-2 left-2 z-10 bg-primary px-2 py-1 rounded-sm">
+              <span class="text-[10px] font-label font-bold text-on-primary uppercase tracking-widest">Best Seller</span>
+            </div>
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCC2ojjRXorcIFKJk2SXGWIYNQPrZXsN7hlMZiWKO4Jnl50gMFlWs3tVnk_HFc-PPKmV43cC_NzyyGw2EL3Vdusc31oA0Ne8O70MflyNYtlnjSO78eyp3mVG9OTx33sM-VfNPN7gbYM9mVB7TKGE-yHabikLJ7U2EJ62L_mECvAI6Zgg3QSlUffAf2-pGmrQX-2Xq1Son2NS7988al_X6yJOoduNb4vsStH0EgzBC5mHbn2FXOcex5GlOGRrecw5P7AAUXiik_Lndg')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Ice Berry</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Fresh berry dengan sensasi dingin</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp125.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Mango Blast -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCV67uM-4afk1Y36ExTTOhsRN8BbInDcu5i8KysS-_wD8Ai6h77o8G_eDcQLpvb0cIHrnektKo3z0JCs0nxdPr8aKH7T6KmcxXby4H7dS4YMDEQbq6Qcbcfk6ap--McUjHKY5w3LJ2SbVJmfZDZ-gFXErgb5-ptDL1b7-SjqKxMQxLjMHrg7-7PKHCmedOQtxiQzcMN1i6xiAFmXeLgZ-vxg7qOnds2fhXZPM-hSoSngjP9h45zKxO6pQe5RNynm3zkValuvPngIqU')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Mango Blast</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Ledakan mangga tropis segar</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp125.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Creamy Vanilla -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terbaru">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="absolute top-2 left-2 z-10 bg-secondary px-2 py-1 rounded-sm">
+              <span class="text-[10px] font-label font-bold text-on-secondary uppercase tracking-widest">New</span>
+            </div>
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDqhNwcR2ZZ4HqiCHGmXf6oTjTynoP0c_P5YJuZNRdyRe0BJy6RqkpP1UaWnLRiMToPPMNYYqGvIJvkXXxKvXxjB_5LFqWBCd3giwiWh76lY-giHHgurdb5mkfGHeSpF3-e8mzlKqnzBZJpbmrBCV7ony4Nra9iZH-BPc9oDNqC9AX5HK4KUpUGWu1FZw3UeHD0HzJGtuAhxqFBHDeKpph-CT1OYY-OsZNS8rI719b5acspyXsANsL5cpOSx-wgfY7j6GtgCxEu-lM')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Creamy Vanilla</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Sentuhan vanila lembut</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp140.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Dark Coffee -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terlaris">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCgxmP1esQYzqxXumFfrJfsfs0blRRh8FGsCzFNsG9RxpY2UTrL_g2MhcyXXI6Q-6Rwk3SlC8p_5yNeuVE4VLOMsrVIdJAMFYZPhsAGM3la32OSNYBtgg3lXYS6n_4-E6whWWV8mcH2N7mEC8TvI4chJfk4KTq-N6wHZAQ-PYNYLC-6rpTWb6XUIZ3iuCmxiR0Pqm6qq1F5-so7pQGKc6nvskBwa2fQ3B-tgpQ98hNnSOzk1tUOUKeDdB7D7VF3iccgKHescjfss4')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Dark Coffee</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Aroma kopi premium yang kuat</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp150.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Lychee Ice -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDmCIG1Q6xDO3HFZiO7jtswRUA2RGv6egTQQ6MHocV5_Ecq9M_ZyQbfT_1pQokDlKoCy2t17GEUhO0TtmoumAj5xLi3skbrozcasV-2v6ocNmelhTDJ6a6TVBvH7OcCL3ivliv9VPUYC6IPdXZXRI1TxA4cLETZP2TojjIB9g2-QxhfjokRl9R3eoqCe-LYvtUOxPF6WWx0SE1GdrviPWPm7KPEKB9uTGi2LMrSkYrf8b9ev-NhPu3mgPxqSj9ei_ANqmyVWRdFAJg')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Lychee Ice</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Leci segar dengan cooling sensation</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp125.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Grape Rush -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="promo">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="absolute top-2 left-2 z-10 bg-error px-2 py-1 rounded-sm">
+              <span class="text-[10px] font-label font-bold text-on-error uppercase tracking-widest">Promo</span>
+            </div>
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDBc_qu6e8wE2A-7qW09MTLrQ9OvkJBxjecJLGsls51ZZyLfD0z0h58OI2PxC4_VTCu0AMXc1YJySCjZrjlI1v7IRjfRCoDl6Ul6njCjdG5NympNuBj_1uiE0n6xO-wZRmryUR_C-nhCgBb9jKzqZoN2OXhSEM8q1ipijxI6RrM1BzK3YHLmXCS9osrZx5UTxQLjwGdWcwpeeIl0ZfacRdQMSgAR8d7FC2w1ykR_BXG52BNlM_VXAjI9-grSCMxKZ2B44tPjQl8k4')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Grape Rush</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Rasa anggur matang yang manis</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp130.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Strawberry Milk -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terlaris">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBGM7iMFgOdBCUMt8m67rAZnenlEpazA3lewvHyiMq2HDIO-HCJ9AXw64ewjLZJydjBfps9jGnOEZ5PIbfZJLfBiBJZu3pP27pPpaMg74c48apaSXE3XSqzWqV5nCgeiAmfvOldtwJcNlvRiu4TaNYmcFrxWPQBAcq9WAZaKYj18V1KZHQsOxTREOiK4CWqyLjiHRYMgOG1S6KHatmxngK6RCz9uURHIiOuKqTPyEV63sGelxVfkadZ8rFXo8rKWAtbxwoe7JFjuHQ')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Strawberry Milk</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Perpaduan susu dan stroberi</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp145.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Mint Freeze -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terbaru promo">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBCP2Q7WuRrISRGiXk4om2JKV__remXUIkbwHX6Y3cr1EPyQ0IOqUdpRacDhCwaOVrvOWoPVjXYwDnKZZ7YgnBQCgshtTnWDMAYia7-8fF9hLtpycuNb_Dl3zJcMuUSZ-9T5or6B6RESoK0w_tJZSri-Resodfy0JRV8Ib-UsPpfhYzqrFohad1nbS0vTxwZV_5Jz7mcpLssuBNMWBWJcpEIvWTen1MfKiO4L108CLsrF72wpNQf_O8gh8aDtVQMELxiXYZzZnHmwk')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Mint Freeze</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Kesegaran mint murni</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp120.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Banana Smooth -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBhem6BsuMomqDiDeAkTttMTA_chWgp0vRRw_GjgaQbTIyAs8zV0LEVwVXZqSD7vLKv__8CSb7YK-GY1iS4nVvr0rdJCAk8NH2MU-JiA-U6l1HFt_lc_8iZyJjQC_qfT6Xaj8kQC8kulNUnbNnQH9ncWjg76xRlp9gUsb1eGCWo7NVP1dLM5vg5bt31BeGnuTE5DA3YDmURQ7y5EGP7BB55IMCFr8z7YQqexeLuYgvholsWJcrTV9WFcNig-WVt-rmaWTZ5f3BWF-U')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Banana Smooth</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Pisang lembut yang creamy</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp140.000</p>
+          </div>
+        </div>
+
+        <!-- Mawar Caramel Tobacco -->
+        <div class="product-card flex flex-col bg-surface-container-lowest rounded-xl editorial-shadow overflow-hidden" data-tags="terlaris">
+          <div class="relative w-full aspect-square bg-surface-container overflow-hidden">
+            <div class="product-img w-full h-full bg-center bg-no-repeat bg-cover" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB_UFccPXT7bhfDK-bsuBpCkKW5zr6XPkDdgdKYnwYcnWYUtPm2sZfnxkpgt2Ad0y8pH8yjgH1ivffmUmKzSWE5IMW6yxGPAMGFD-aVNYnznzsUBw34NpyKAavIKh53nGPbNnUrhrnNDzRjBGgURiRlRRyal0Ijp0xvJQ3GgFb0CF6MBF0mui1XdnYMcNRvmHqfsI4FGxchsztWgYVRawWViNYDBqi9hrMCHPhjHJ6lT6n1uc6dncj8qoIDV-ZHiZD4xpzTaJmBNUM')"></div>
+          </div>
+          <div class="p-4 flex flex-col gap-1">
+            <h3 class="text-on-surface text-sm font-headline font-bold leading-tight">Mawar Caramel Tobacco</h3>
+            <p class="text-secondary text-[11px] leading-snug font-body">Klasik tembakau karamel</p>
+            <p class="text-primary text-sm font-headline font-bold mt-1">Rp150.000</p>
+          </div>
+        </div>
+
+      </div><!-- /product-grid -->
+
+      <!-- Empty state -->
+      <div id="empty-state" class="hidden flex-col items-center justify-center py-20 gap-3 text-center px-8">
+        <span class="material-symbols-outlined text-5xl text-secondary/40">search_off</span>
+        <p class="font-headline font-bold text-on-surface">Produk tidak ditemukan</p>
+        <p class="text-sm text-secondary">Coba kata kunci lain atau pilih kategori yang berbeda.</p>
+      </div>
+
+    </div><!-- /max-w wrapper -->
+
+    <!-- Bottom Nav -->
+    <div class="bottom-nav">
+      <div class="flex gap-2 border-t border-outline-variant/10 bg-background/85 backdrop-blur-xl px-4 pt-2 safe-bottom">
+
+        <button data-nav="home" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-secondary ripple-btn py-1">
+          <div class="flex h-8 items-center justify-center">
+            <span class="material-symbols-outlined">home</span>
+          </div>
+          <p class="text-[10px] font-label font-bold uppercase tracking-wider">Beranda</p>
+        </button>
+
+        <button data-nav="katalog" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-primary ripple-btn py-1">
+          <div class="flex h-8 items-center justify-center">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">table_chart</span>
+          </div>
+          <p class="text-[10px] font-label font-bold uppercase tracking-wider">Katalog</p>
+        </button>
+
+        <button data-nav="favorit" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-secondary ripple-btn py-1">
+          <div class="flex h-8 items-center justify-center">
+            <span class="material-symbols-outlined">favorite</span>
+          </div>
+          <p class="text-[10px] font-label font-bold uppercase tracking-wider">Favorit</p>
+        </button>
+
+        <button data-nav="profil" class="nav-item flex flex-1 flex-col items-center justify-end gap-1 text-secondary ripple-btn py-1">
+          <div class="flex h-8 items-center justify-center">
+            <span class="material-symbols-outlined">person</span>
+          </div>
+          <p class="text-[10px] font-label font-bold uppercase tracking-wider">Profil</p>
+        </button>
+
+      </div>
+    </div>
+
+  </div><!-- /view-katalog -->
+
+</div><!-- /app -->
+
+<script>
+  // ─── State ───────────────────────────────────────
+  let currentView = 'home';
+
+  // ─── Elements ────────────────────────────────────
+  const viewHome    = document.getElementById('view-home');
+  const viewKatalog = document.getElementById('view-katalog');
+  const btnKatalog  = document.getElementById('btn-katalog');
+  const btnBack     = document.getElementById('btn-back');
+  const searchInput = document.getElementById('search-input');
+  const clearBtn    = document.getElementById('clear-search');
+  const grid        = document.getElementById('product-grid');
+  const emptyState  = document.getElementById('empty-state');
+  const catPills    = document.querySelectorAll('.cat-pill');
+  const navItems    = document.querySelectorAll('.nav-item');
+
+  let activeCategory = 'all';
+
+  // ─── Navigation ──────────────────────────────────
+  function goTo(view) {
+    if (view === currentView) return;
+
+    if (view === 'katalog') {
+      viewHome.classList.remove('active');
+      viewHome.classList.add('slide-left');
+      viewKatalog.classList.remove('slide-right');
+      viewKatalog.classList.add('active');
+      // Reset scroll katalog setiap buka
+      viewKatalog.scrollTo({ top: 0 });
+    } else {
+      viewKatalog.classList.remove('active');
+      viewKatalog.classList.add('slide-right');
+      viewHome.classList.remove('slide-left');
+      viewHome.classList.add('active');
+    }
+
+    currentView = view;
+  }
+
+  btnKatalog.addEventListener('click', () => goTo('katalog'));
+  btnBack.addEventListener('click',    () => goTo('home'));
+
+  // Bottom nav buttons di katalog
+  navItems.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = btn.dataset.nav;
+      if (target === 'home')    goTo('home');
+      if (target === 'katalog') goTo('katalog');
+    });
+  });
+
+  // ─── Category filter ─────────────────────────────
+  catPills.forEach(pill => {
+    pill.addEventListener('click', () => {
+      catPills.forEach(p => {
+        p.classList.remove('active', 'bg-primary', 'text-on-primary');
+        p.classList.add('bg-surface-container-highest', 'text-on-surface');
+      });
+      pill.classList.add('active', 'bg-primary', 'text-on-primary');
+      pill.classList.remove('bg-surface-container-highest', 'text-on-surface');
+
+      activeCategory = pill.dataset.cat;
+      filterProducts();
+    });
+  });
+
+  // ─── Search ──────────────────────────────────────
+  searchInput.addEventListener('input', () => {
+    clearBtn.classList.toggle('hidden', searchInput.value === '');
+    filterProducts();
+  });
+
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    filterProducts();
+    searchInput.focus();
+  });
+
+  function filterProducts() {
+    const query   = searchInput.value.toLowerCase().trim();
+    const cards   = grid.querySelectorAll('.product-card');
+    let visible   = 0;
+
+    cards.forEach(card => {
+      const name  = card.querySelector('h3').textContent.toLowerCase();
+      const desc  = card.querySelector('p').textContent.toLowerCase();
+      const tags  = card.dataset.tags || '';
+
+      const matchSearch = query === '' || name.includes(query) || desc.includes(query);
+      const matchCat    = activeCategory === 'all' || tags.includes(activeCategory);
+
+      if (matchSearch && matchCat) {
+        card.style.display = '';
+        visible++;
+      } else {
+        card.style.display = 'none';
+      }
+    });
+
+    emptyState.classList.toggle('hidden',  visible > 0);
+    emptyState.classList.toggle('flex',    visible === 0);
+    grid.classList.toggle('hidden',        visible === 0);
+  }
+</script>
+</body>
+</html>
